@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Trier JS: Web Components - 21.03.2018</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+				<section>
+						<h1>Web Components</h1>
+						<img src="./webcomponents.svg" class="plain">
+						<h3>Building blocks for the web</h3>
+				</section>
+				
+				
+				<section>
+					<h2>Components?</h2>
+
+					<section>
+						A term we as developer use a lot, but fail to come up with a single definition. ;)
+						<ul>
+							<li>Something which encapsulates a functionality</li>
+							<li>Something that fosters (black box) reuse</li>
+							<li>Something you can mix and match</li>
+							<li>A unit of independent deployment</li>
+						</ul>
+					</section>
+
+					<section data-background-image="react-icon.png" data-background-size="200px" data-background-position="left center">
+							<blockquote>
+								Components let you split the UI into <b>independent</b>, <b>reusable</b> pieces, and think about each piece in <b>isolation</b>.
+
+								[..] They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
+							</blockquote>
+										
+					</section>
+
+					<section data-background-image="vue.png" data-background-size="200px" data-background-position="left center">
+						<blockquote>
+						  Components are one of the most powerful features of Vue. They help you <b>extend basic HTML</b> elements to <b>encapsulate reusable code</b>. 
+						  At a high level, components are <b>custom elements</b> that Vue’s compiler attaches <b>behavior</b> to. 
+						  In some cases, they may also appear as a native HTML element extended with the special is attribute.
+						</blockquote>
+					</section>
+
+					<section data-background-image="angular.png" data-background-size="200px" data-background-position="left center"	>
+						<blockquote>
+							Components are the most basic <b>building block</b> of an UI in an Angular application. An [..] application is a <b>tree of [..] components</b>. 
+							[..] Unlike directives, components always have a <b>template</b> and only one component can be instantiated per an element in a template.
+						</blockquote>
+					</section>
+
+					<section>
+					<blockquote>
+							"One thing can be stated with certainty:<br/> Components are for composition.<br/></span> 
+							[..] Beyond that trivial observation, much is unclear."</span><br/>
+							(Clemens Szypersky)
+					</blockquote>
+					</section>
+
+
+				</section>
+
+				<section>
+					<h2>Web Components</h2>
+					<section>
+						<p>A set of well-supported specs:</p>
+						<ul>
+							<li>Custom Elements</li>
+							<li>HTML Templates</li>
+							<li>Shadow DOM</li>
+							<li>HTML Imports</li>
+						</ul>
+					</section>
+					
+
+					<section>
+						<img src="webcomponents-support.png" class="plain">
+					</section>
+			
+				</section>
+
+				<section>
+					<h2>Custom Elements</h2>
+					<section>
+<p></p>Allow the developer to create new HTML tags (autonomous custom elements) or extend the behaviour of existing elements (customized built-in elements).</p>
+<p>Provide a component life cycle.</p>
+				</section>
+					
+					<section>
+
+							
+<pre><code data-trim data-noescape>class MyCustomElement extends HTMLElement {
+  constructor() {
+   super();						
+  }
+
+  connectedCallback() {}
+  attributeChangedCallback(attrName, oldVal, newVal) {}
+  disconnectedCallback() {}
+  adoptedCallback(oldDocument, newDocument) {}
+  static get observedAttributes() {
+    return ["attr1", "attr2"];
+  }
+}</code></pre>
+				</section>
+
+				<section>
+					<h3>Custom Elements Registry</h3>
+<pre><code data-trim data-noescape>
+customElements.define("my-custom-tag", MyCustomElement);
+
+customElements.get("my-custom-tag");
+
+customElements.whenDefined("my-custom-tag");
+</code></pre>					
+				</section>
+
+
+				</section>
+
+				
+				<section>
+					<h2>HTML Templates</h2>
+					<section>
+<blockquote>
+	The template element is used to declare fragments of HTML 
+	that can be cloned and inserted in the document by script.
+</blockquote>
+ 
+					</section>
+
+					<section>
+						The content of a template
+<ul>
+<li>is inert until activated</li>
+<li>won't have side effects (no scripts executed, no images loading) until it is used</li>
+<li>is considered not to be in the document</li>
+</ul>
+
+					</section>
+
+
+					<section>
+	
+<pre><code data-trim data-noescape>
+&lt;template id="mytemplate">
+  My HTML goes here
+&lt;/template>
+</code></pre>
+</section>					
+
+<section>
+	
+<pre><code data-trim data-noescape>
+const t = document.querySelector('#mytemplate');
+
+const clone = document.importNode(t.content, true);
+
+document.body.appendChild(clone);
+</code></pre>
+</section>
+	
+				</section>
+
+				<section>
+					<h2>Shadow DOM</h2>
+					<section>
+							<p>Shadow DOM enables to</p>
+
+							<p>
+								<ul>
+									<li>author self-contained components with isolated DOM</li>
+									<li>bundle CSS with markup</li>
+									<li>scope and simplify CSS</li> 
+									<li>hide implementation details</li>
+								</ul>
+							</p>
+				</section>
+				<section>
+<pre><code data-trim data-noescape>
+	const root = element.attachShadow({mode: 'open'});
+	root.appendChild(node);</code></pre>
+				</section>
+			</section>
+			</section>
+	
+				<section>
+					<h2>HTML Imports</h2>
+					<section>			
+						Intended to be the packaging mechanism for web components		
+						<pre><code data-trim data-noescape>
+							&lt;link rel="import" href="my-component.html"&gt;
+						</code></pre>
+					</section>
+
+				</section>
+	
+				<section>
+					<h2>Building Web Components with</h2>
+					<img src="./stencil.svg" class="plain">
+				</section>
+
+				<section>
+					<h2>Stencil JS</h2>
+
+					<section>
+						<ul>
+							<li>Build time tool for developing 100% standard-compliant plain JavaScript web components</li>
+							<li>Borrows ideas from popular frameworks without itself being yet another one</li>
+							<li>Utilizes: TypeScript, JSX / TSX, SCSS</li>				
+						</ul>
+					</section>
+					<section>
+							<h3>Decorator based API</h2>
+					
+							<ul>
+								<span  class="fragment">
+									<li>@Component()</li>
+								</span>
+								<span  class="fragment">
+									<li>@Prop()</li>
+									<li>@State()</li>
+								</span>
+								<span  class="fragment">
+									<li>@Watch()</li>
+									<li>@Method()</li>
+									<li>@Listen()</li>
+									<li>@Event()</li>
+								</span>
+											
+								<span  class="fragment">
+									<li>@Element()</li>
+							    </span>
+							</ul>						
+					</section>
+					<section>
+							<h3>JSX/TSX for Templates / rendering</h3>
+<pre><code data-trim data-noescape>render() {
+ return (
+  &lt;li>
+   I'm an item  &lt;slot>&lt;/slot>
+  &lt;/li>);
+}</code></pre>
+								
+					</section>
+					<section>
+							<h3>Life cycle hooks</h3>
+							<ul>
+								<li>componentWillLoad()</li>
+								<li>componentDidLoad()</li>
+								<li>componentWillUpdate()</li>
+								<li>componentDidUpdate()</li>
+								<li>componentDidUnload()</li>							
+							</ul>	
+								
+					</section>
+				</section>
+
+				<section>
+					<h2>Questions?</h2>
+					<img src="components.jpg">
+				</section>
+
+				<section>
+						THANK YOU	
+				</section>
+			
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
