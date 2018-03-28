@@ -1,0 +1,156 @@
+<template id="todo-item-template">
+    <style>
+        .done {
+            color: greenyellow;
+            text-decoration: line-through;    
+        }
+        .overdue {
+            text-transform: uppercase;
+            color: red;
+        }
+    </style>
+
+    <li>
+        <input type="checkbox" id="todo-state">
+        <span id="todo-task">
+            <slot></slot>
+        </span>
+    </li>
+</template>
+
+<template id="todoListTemplate">
+    <style>
+        ul {
+            list-style-type: square;
+        }    
+
+        :host {
+            display: block;
+        }
+    </style>
+    <ul>
+        <slot></slot>
+    </ul>
+</template>
+
+<script>
+
+
+const importDocument = document.currentScript.ownerDocument;
+
+
+class TodoItem extends HTMLElement {
+
+    static get observedAttributes() {
+        return ["due", "done"];
+    }
+
+    constructor() {
+        super();
+        this.attachShadow({mode: "open"});
+
+        const todoItemTemplate = importDocument.getElementById("todo-item-template");
+
+        this.shadowRoot.appendChild(todoItemTemplate.content.cloneNode(true));
+        
+        this.listener = 
+            this.todo.namedItem("todo-state")
+                .addEventListener("change", (event) => this.toggleDone());
+    }
+
+    connectedCallback() {
+        this.render();
+    }
+
+    attributeChangedCallback(attributeName, previousVal, currentVal) {
+        console.log(attributeName, previousVal, currentVal);
+        this.render();
+    }
+
+    disconnectedCallback() {
+        this.todo.namedItem("todo-state").removeEventListener();
+    }
+
+    toggleDone() {
+        this.done = !this.done;
+    }
+
+    get done() {
+        const state = this.getAttribute("done");
+        if (!state || state.toLowerCase() === "false") {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    get due() {
+        return this.getAttribute("due");
+    }
+
+    set due(dueDate) {
+        console.log(dueDate)
+        this.setAttribute("due", dueDate);
+        this.render();
+    }
+
+    set done(state) {    
+        this.setAttribute("done", state);
+        this.render();
+    }
+
+    get overdue() {
+        return this.due ? Date.now() > Date.parse(this.due) : false;
+    }
+
+    get todo() {
+        return this.shadowRoot.children[1].children;
+    }
+
+    render() {
+        const task = this.todo.namedItem("todo-task");
+        task.className = this.cssClass();
+        this.todo.namedItem("todo-state").checked = this.done;
+    }
+
+    cssClass() {
+        return this.done ? "done" : (this.overdue ? "overdue" : ""); 
+    }
+}
+
+
+
+class TodoList extends HTMLElement {
+ 
+    constructor() {
+        super();
+
+        this.items = [];
+
+        this.attachShadow({mode: "open"});
+    }
+
+    addItem(task, dueDate) {
+        const item = document.createElement("todo-item");
+
+        item.due = dueDate;
+   
+        item.appendChild(document.createTextNode(task));
+
+        console.log(this.shadowRoot.children[0])
+        this.shadowRoot.children[1].appendChild(item);
+    }
+
+    connectedCallback() {
+        
+        const todoListTemplate = importDocument.getElementById("todoListTemplate");
+        
+        this.shadowRoot.appendChild(todoListTemplate.content.cloneNode(true));
+    }
+
+}
+
+customElements.define("todo-item", TodoItem);
+customElements.define("todo-list", TodoList);
+
+</script>

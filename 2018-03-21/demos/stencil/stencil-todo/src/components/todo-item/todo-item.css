@@ -1,0 +1,8 @@
+.done {
+    color: greenyellow;
+    text-decoration: line-through;    
+}
+.overdue {
+    text-transform: uppercase;
+    color: red;
+}

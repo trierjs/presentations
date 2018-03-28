@@ -1,0 +1,37 @@
+<html>
+    <body>
+        <link rel="import" href="./todo-webcomponent.html">
+
+        <todo-list id="todos">
+            <todo-item due="2018-03-20">Prepare Talk</todo-item>
+        </todo-list>
+
+        <input id="task"> <button id="addTask">Add task</button>
+       
+        <script>
+
+            const tasks = [
+                "declare <template>",
+                "extend HTMLElement",
+                "call super() in constructor",
+                "create shadowRoot in constructor",
+                "clone template to shadow dom",
+                "declare static observedAttributes()",
+                "reflect properties to attributes",
+                "give talk",
+                "reimplement with stencil js"
+            ]
+
+            const todos = document.getElementById("todos");
+
+            tasks.forEach(task => todos.addItem(task))
+            
+            document.getElementById("addTask").addEventListener("click", () => {
+                todos.addItem(document.getElementById("task").value,"2018-20-03");
+            });
+
+            
+        </script>
+
+    </body>
+</html>
